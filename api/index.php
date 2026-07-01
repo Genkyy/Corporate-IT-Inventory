@@ -34,7 +34,7 @@ try {
     $_ENV['DB_DATABASE'] = $dbPath;
     $_ENV['SESSION_DRIVER'] = 'file';
     $_ENV['CACHE_STORE'] = 'file';
-    $_ENV['LOG_CHANNEL'] = 'stderr';
+    $_ENV['LOG_CHANNEL'] = 'single';
     $_ENV['VIEW_COMPILED_PATH'] = "$tmpStorage/framework/views";
 
     putenv("APP_KEY=" . $_ENV['APP_KEY']);
@@ -46,7 +46,7 @@ try {
     putenv("DB_DATABASE=$dbPath");
     putenv("SESSION_DRIVER=file");
     putenv("CACHE_STORE=file");
-    putenv("LOG_CHANNEL=stderr");
+    putenv("LOG_CHANNEL=single");
 
     // ─── 4. Bootstrap Laravel ─────────────────────────────────────────────────────
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -77,4 +77,9 @@ try {
     echo "<p><strong>File:</strong> " . htmlspecialchars($e->getFile()) . ":" . $e->getLine() . "</p>";
     echo "<h2>Stack Trace:</h2>";
     echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+    
+    if (file_exists('/tmp/laravel-storage/logs/laravel.log')) {
+        echo "<h2>Original Laravel Log:</h2>";
+        echo "<pre>" . htmlspecialchars(file_get_contents('/tmp/laravel-storage/logs/laravel.log')) . "</pre>";
+    }
 }
