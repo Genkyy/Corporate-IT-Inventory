@@ -36,6 +36,7 @@ if ($isNewDb) {
 
 // ─── 3. Set environment variables ─────────────────────────────────────────────
 putenv("VERCEL_RUNTIME=1");
+putenv("APP_DEBUG=true");
 putenv("DB_CONNECTION=sqlite");
 putenv("DB_DATABASE=$dbPath");
 putenv("SESSION_DRIVER=file");
@@ -43,6 +44,7 @@ putenv("CACHE_STORE=file");
 putenv("LOG_CHANNEL=stderr");
 
 $_ENV['VERCEL_RUNTIME'] = '1';
+$_ENV['APP_DEBUG'] = 'true';
 $_ENV['DB_CONNECTION'] = 'sqlite';
 $_ENV['DB_DATABASE'] = $dbPath;
 $_ENV['SESSION_DRIVER'] = 'file';
