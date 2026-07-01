@@ -45,11 +45,18 @@ putenv("LOG_CHANNEL=stderr");
 
 $_ENV['VERCEL_RUNTIME'] = '1';
 $_ENV['APP_DEBUG'] = 'true';
+$_ENV['APP_KEY'] = 'base64:gFqHKzwjClHI0s3TofjuLL0hcex+0ii8DeMchxPuAvo=';
+$_ENV['APP_URL'] = 'https://corporate-it-inventory-2ffb1183n-genkys-projects.vercel.app';
 $_ENV['DB_CONNECTION'] = 'sqlite';
 $_ENV['DB_DATABASE'] = $dbPath;
 $_ENV['SESSION_DRIVER'] = 'file';
 $_ENV['CACHE_STORE'] = 'file';
 $_ENV['LOG_CHANNEL'] = 'stderr';
+$_ENV['VIEW_COMPILED_PATH'] = "$tmpStorage/framework/views";
+
+putenv("APP_KEY=" . $_ENV['APP_KEY']);
+putenv("APP_URL=" . $_ENV['APP_URL']);
+putenv("VIEW_COMPILED_PATH=" . $_ENV['VIEW_COMPILED_PATH']);
 
 // ─── 4. Bootstrap Laravel ─────────────────────────────────────────────────────
 require_once __DIR__ . '/../vendor/autoload.php';
