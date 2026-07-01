@@ -1,0 +1,106 @@
+# Product Requirements Document (PRD)
+
+**Nama Proyek:** Corporate IT Inventory & Employee Onboarding-Offboarding Automation (MedIT-Hub / CorpIT-Hub)
+**Tech Stack Utama:** Laravel 11, Inertia.js, React, Tailwind CSS, MySQL
+**Target Pengguna:** IT Support Team, IT Manager, HRD, dan Karyawan (untuk Helpdesk)
+
+---
+
+## 🚀 Fitur Strategis Tambahan (Enterprise-Grade)
+
+1. **IP Address & Mac Address Management (IPAM):** Menghindari *IP Conflict* di kantor. Di dalam Filament, buat modul untuk *mapping* IP Address statis.
+2. **QR Code Generator & Scanner:** Efisiensi *troubleshooting* lapangan. Sistem otomatis men-generate QR Code untuk setiap aset baru yang bisa di-scan via HP untuk memunculkan log perbaikan.
+3. **Procurement & Mutation Request Approval:** Alur birokrasi TI, mutasi perangkat jika berpindah tangan, pencatatan serah terima digital, dan pengajuan pengadaan barang.
+4. **Role-Based Access Control (RBAC):** Pemisahan akses terpusat. HRD (onboarding/offboarding), IT Support (ubah aset), Karyawan/User (hanya melihat aset sendiri dan membuat tiket kerusakan).
+5. **IT Helpdesk & Ticketing System:** Portal khusus untuk Karyawan melaporkan kendala/kerusakan perangkat, lalu IT Support mencatatnya sebagai riwayat perbaikan (troubleshooting logs).
+6. **Audit Trail:** Mencatat log aktivitas (siapa melakukan apa) setiap ada perubahan krusial pada data aset demi akuntabilitas.
+
+---
+
+## 1. Tujuan & Objektivitas (Objective)
+
+* Mendigitalisasi dan mengotomatisasi manajemen aset fisik (perangkat keras) dan aset digital (akun/lisensi) perusahaan.
+* Menyediakan *platform* pelacakan siklus hidup karyawan (*onboarding & offboarding*) dari sudut pandang pemenuhan kebutuhan dan keamanan fasilitas TI.
+* Memberikan visualisasi data analitik performa aset kepada manajemen untuk efisiensi anggaran pengadaan perangkat baru.
+* Menciptakan alur kerja yang transparan dan dapat diaudit (*auditable*) melalui sistem tiket dan riwayat serah terima aset.
+
+---
+
+## 2. Ruang Lingkup Fitur (User Features & Epics)
+
+#### Epics 1: Dashboard & Analytics (Filament Widgets)
+* **Widget Ringkasan:** Total nilai aset, jumlah tiket perbaikan aktif, aset rusak, jumlah lisensi yang akan kedaluwarsa (H-30).
+* **Grafik Batang/Garis:** Tren kerusakan perangkat per divisi/lokasi guna menganalisis wilayah mana yang sering bermasalah.
+* **Donut Chart:** Persentase kondisi aset (*Good, Maintenance, Broken, Disposed/Retired*).
+
+#### Epics 2: Master Data Management
+* **CRUD Master Data:** Manajemen entitas dasar perusahaan agar terstandarisasi, meliputi `Departments` (Divisi), `Locations` (Cabang/Ruangan), `Vendors` (Pemasok), `Asset Categories`, dan `Asset Models`.
+
+#### Epics 3: Advanced Asset Management (Inventaris Perangkat)
+* **CRUD Data Perangkat:** Tersambung ke master data (Model, Vendor, dll). Mencatat harga beli (`purchase_cost`) dan masa berlaku garansi (`warranty_expiry_date`).
+* **Smart Bulk Import:** Fitur unggah ratusan data aset massal menggunakan file Excel/CSV via *Laravel Queue*.
+* **Standardization Helper (Automated Device Rename):** Generator otomatis ID unik kombinasi `[KODE_PERUSAHAAN]-[LOKASI]-[KATEGORI]-[NOMOR_URUT]`.
+* **QR Code & Label Printing:** Automasi pembuatan QR Code unik berbasis URL internal aset untuk ditempel di fisik.
+
+#### Epics 4: Asset Lifecycle, Mutation & Automation
+* **Assignment & Handover (Serah Terima):** Proses pemberian aset ke karyawan lengkap dengan dokumen persetujuan serah terima digital. Semua tersimpan dalam tabel riwayat historis `asset_assignments`.
+* **Karyawan Baru (Onboarding Checklist):** IT Support menetapkan paket standar, sistem men-generate tugas: alokasi IP, instalasi OS, serah terima.
+* **Karyawan Resign (Offboarding Security):** Saat HRD memicu *offboarding*, sistem otomatis mendaftar semua aset fisik yang harus ditarik/dikembalikan, dan akun digital yang wajib ditutup.
+
+#### Epics 5: IT Helpdesk & Ticketing Ledger
+* **Portal Tiket Karyawan:** Karyawan dapat *login* untuk membuat laporan/tiket kerusakan aset yang mereka pegang.
+* **Troubleshooting Ledger (Log Perbaikan):** Teknisi mencatat aktivitas pemeliharaan, status garansi, serta mencatat biaya *sparepart* (jika ada) ke dalam tiket yang dilaporkan.
+
+#### Epics 6: License & Network Tracker
+* **Software License Alerts:** Notifikasi otomatis dan alokasi *seat* lisensi (Windows, Office, dll) ke aset/karyawan tertentu.
+* **IPAM Module:** Log pemetaan IP Address statis kantor per *subnet* untuk mencegah gangguan jaringan.
+
+---
+
+## 3. Arsitektur Basis Data & Hubungan Tabel (Database Schema v2)
+
+Skema direvisi menjadi lebih *relational* dan tangguh untuk standar *enterprise*:
+
+```text
+[Master Data]
+- departments (id, name, code)
+- locations (id, name, address)
+- vendors (id, name, contact_info)
+- categories (id, name)
+- models (id, category_id, brand, name)
+
+[Core Users]
+- users (id, name, email, password, role) # Terintegrasi Spatie Permission (Super Admin, IT, HR, User)
+- employees (id, user_id, department_id, location_id, nip, status)
+
+[Core Assets]
+- assets (id, model_id, vendor_id, serial_number, device_name, status[available, assigned, maintenance, retired], purchase_date, warranty_expiry, purchase_cost)
+- ip_addresses (id, asset_id, ip_address, subnet, description)
+- licenses (id, software_name, product_key, total_seats, expiry_date)
+- license_allocations (id, license_id, asset_id, employee_id)
+
+[Transactions & Logs]
+- asset_assignments (id, asset_id, employee_id, assigned_at, returned_at, condition_on_assignment, document_path)
+- tickets (id, employee_id, asset_id, subject, description, priority, status)
+- troubleshooting_logs (id, ticket_id, asset_id, technician_user_id, action_taken, sparepart_cost, created_at)
+```
+
+---
+
+## 4. Kriteria Keberhasilan Non-Teknis (Business Value)
+
+* **Keamanan Data & Compliance:** Proses *offboarding* memotong risiko kelalaian penarikan aset digital hingga 100%, serta tersedianya *Audit Trail* operasional secara akurat.
+* **Efisiensi Waktu & Operasional:** Fitur *bulk import* memangkas waktu inventaris, dan integrasi modul tiket mempercepat resolusi masalah IT.
+* **Pengambilan Keputusan Bisnis:** Manajemen dapat melihat riwayat perbaikan secara transparan (*Total Cost of Ownership* / TCO) untuk menentukan kelayakan penggantian/pembelian perangkat keras baru dibanding sekadar servis berkala.
+
+---
+
+## 5. Panduan UI/UX (Design System Guidelines)
+
+Untuk memastikan antarmuka (terutama portal Helpdesk Karyawan) tidak terasa kaku, kita akan mengadopsi pola visual modern dan bersih:
+
+* **Tipografi Modern & Kuat:** Menggunakan font keluarga *Sans-serif* (seperti "Gabarito" atau Inter) dengan *heading* yang tebal dan padat, serta label kecil bergaya *uppercase* (huruf besar dengan jarak renggang) untuk kejelasan status.
+* **Pola Kartu (Cards):** Menampilkan tiket dan aset dalam desain kartu berlatar putih (`bg-card`), sudut melengkung halus (`rounded-xl` atau `rounded-2xl`), dan garis tepi (border) tipis. Akan ada efek mikro-animasi seperti kartu sedikit terangkat (`hover:-translate-y-1`) dengan bayangan membesar saat di-hover.
+* **Tombol Organik:** Call-to-Action (seperti tombol 'Buat Tiket Baru') akan menggunakan sudut sangat membulat (`rounded-full`) untuk memberikan kesan ramah dan tidak kaku, dengan warna primer kontras tinggi.
+* **Ruang Kosong (White Space):** Tata letak yang *clean* dengan padding yang lega antar bagian (section), memberikan efek lapang sehingga mata pengguna (karyawan/admin IT) tidak cepat lelah.
+* **Visual Status (Badge/Sticker):** Status aset ('Rusak', 'Dipinjam', 'Tersedia') menggunakan desain ala *badge* kecil dengan warna-warna cerah dan tegas agar mudah dikenali sekilas.
