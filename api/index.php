@@ -26,6 +26,7 @@ try {
     }
 
     // ─── 3. Set environment variables ─────────────────────────────────────────────
+    $_SERVER['HTTPS'] = 'on';
     $_ENV['VERCEL_RUNTIME'] = '1';
     $_ENV['APP_DEBUG'] = 'true';
     $_ENV['APP_KEY'] = 'base64:gFqHKzwjClHI0s3TofjuLL0hcex+0ii8DeMchxPuAvo=';
