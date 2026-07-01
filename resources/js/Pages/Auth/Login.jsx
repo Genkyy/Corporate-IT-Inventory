@@ -17,11 +17,7 @@ export default function Login({ status, canResetPassword }) {
     };
 
     const fillDemoCredentials = (email) => {
-        setData({
-            ...data,
-            email: email,
-            password: 'password', // Default dummy password
-        });
+        setData({ email: email, password: 'password123', remember: false });
     };
 
     return (
@@ -29,14 +25,14 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Log in" />
 
             {status && (
-                <div className="mb-4 font-medium text-sm text-emerald-400">
+                <div className="mb-4 font-medium text-sm text-green-600">
                     {status}
                 </div>
             )}
 
             <form onSubmit={submit} className="space-y-5">
                 <div>
-                    <label className="block text-sm font-bold text-gray-200 mb-1.5" htmlFor="email">
+                    <label className="block text-sm font-bold text-foreground mb-1.5" htmlFor="email">
                         Email Perusahaan
                     </label>
                     <input
@@ -44,16 +40,16 @@ export default function Login({ status, canResetPassword }) {
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full rounded-xl border-white/20 bg-black/30 focus:bg-black/50 focus:border-emerald-500 focus:ring-emerald-500/20 transition-all px-4 py-3 text-white placeholder-gray-400 shadow-sm"
+                        className="mt-1 block w-full rounded-xl border-gray-200 bg-background/50 focus:bg-white focus:border-primary focus:ring-primary/20 transition-all px-4 py-3 text-foreground shadow-sm"
                         autoComplete="username"
                         placeholder="nama@perusahaan.com"
                         onChange={(e) => setData('email', e.target.value)}
                     />
-                    {errors.email && <p className="text-red-400 text-xs mt-1 font-medium">{errors.email}</p>}
+                    {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-gray-200 mb-1.5" htmlFor="password">
+                    <label className="block text-sm font-bold text-foreground mb-1.5" htmlFor="password">
                         Password
                     </label>
                     <input
@@ -61,12 +57,12 @@ export default function Login({ status, canResetPassword }) {
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full rounded-xl border-white/20 bg-black/30 focus:bg-black/50 focus:border-emerald-500 focus:ring-emerald-500/20 transition-all px-4 py-3 text-white placeholder-gray-400 shadow-sm"
+                        className="mt-1 block w-full rounded-xl border-gray-200 bg-background/50 focus:bg-white focus:border-primary focus:ring-primary/20 transition-all px-4 py-3 text-foreground shadow-sm"
                         autoComplete="current-password"
                         placeholder="••••••••"
                         onChange={(e) => setData('password', e.target.value)}
                     />
-                    {errors.password && <p className="text-red-400 text-xs mt-1 font-medium">{errors.password}</p>}
+                    {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.password}</p>}
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -76,78 +72,67 @@ export default function Login({ status, canResetPassword }) {
                             name="remember"
                             checked={data.remember}
                             onChange={(e) => setData('remember', e.target.checked)}
-                            className="rounded border-white/20 bg-black/30 text-emerald-500 shadow-sm focus:ring-emerald-500/20 cursor-pointer group-hover:border-emerald-500 transition-colors"
+                            className="rounded border-gray-300 text-primary shadow-sm focus:ring-primary/20 cursor-pointer group-hover:border-primary transition-colors"
                         />
-                        <span className="ms-2 text-sm text-gray-300 group-hover:text-white transition-colors">Ingat Saya</span>
+                        <span className="ms-2 text-sm text-muted-foreground group-hover:text-foreground transition-colors">Ingat Saya</span>
                     </label>
 
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="text-sm text-emerald-400 font-bold hover:underline"
+                            className="text-sm text-primary font-bold hover:underline"
                         >
                             Lupa Password?
                         </Link>
                     )}
                 </div>
 
-                <div className="pt-2">
-                    <button 
-                        type="submit" 
+                <div className="pt-4 border-t border-gray-100">
+                    <button
+                        type="submit"
                         disabled={processing}
-                        className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-500/20 !py-3.5 text-base font-bold transition-all disabled:opacity-50"
+                        className="w-full flex items-center justify-center gap-2 btn-primary shadow-lg shadow-primary/20 !py-3.5 text-base"
                     >
                         <LogIn className="w-5 h-5" />
                         Log in ke Dashboard
                     </button>
                 </div>
-                
-                {/* TEST ACCOUNT ACCESS (DEMO) */}
-                <div className="mt-8 pt-6 border-t border-white/10">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                        <div className="h-px bg-white/20 flex-1"></div>
-                        <p className="text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                            <span className="text-yellow-400">⚠️</span> Test Account Access (Demo)
-                        </p>
-                        <div className="h-px bg-white/20 flex-1"></div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <button 
-                            type="button" 
-                            onClick={() => fillDemoCredentials('admin@example.com')}
-                            className="flex flex-col items-center justify-center py-2 px-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg transition-colors group"
+                {/* Demo account quick-fill buttons */}
+                <div className="pt-4 border-t border-gray-100">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center mb-3 flex items-center justify-center gap-1.5">
+                        <span>⚡</span> Akun Demo — Klik untuk mengisi otomatis
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                        <button
+                            type="button"
+                            onClick={() => fillDemoCredentials('admin.it@perusahaan.com')}
+                            className="flex flex-col items-center justify-center py-2.5 px-2 bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/50 rounded-xl transition-all group"
                         >
-                            <span className="text-xs font-bold text-gray-200 group-hover:text-white">Super Admin</span>
-                            <span className="text-[10px] text-gray-400">admin@example.com</span>
+                            <span className="text-xs font-bold text-primary">IT Support</span>
+                            <span className="text-[10px] text-muted-foreground mt-0.5">admin.it</span>
                         </button>
-                        <button 
-                            type="button" 
-                            onClick={() => fillDemoCredentials('manager@example.com')}
-                            className="flex flex-col items-center justify-center py-2 px-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg transition-colors group"
+                        <button
+                            type="button"
+                            onClick={() => fillDemoCredentials('hrd@perusahaan.com')}
+                            className="flex flex-col items-center justify-center py-2.5 px-2 bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/50 rounded-xl transition-all group"
                         >
-                            <span className="text-xs font-bold text-gray-200 group-hover:text-white">IT Manager</span>
-                            <span className="text-[10px] text-gray-400">manager@example.com</span>
+                            <span className="text-xs font-bold text-primary">HRD</span>
+                            <span className="text-[10px] text-muted-foreground mt-0.5">hrd</span>
                         </button>
-                        <button 
-                            type="button" 
-                            onClick={() => fillDemoCredentials('support@example.com')}
-                            className="flex flex-col items-center justify-center py-2 px-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg transition-colors group"
+                        <button
+                            type="button"
+                            onClick={() => fillDemoCredentials('andi.staff@perusahaan.com')}
+                            className="flex flex-col items-center justify-center py-2.5 px-2 bg-primary/5 hover:bg-primary/15 border border-primary/20 hover:border-primary/50 rounded-xl transition-all group"
                         >
-                            <span className="text-xs font-bold text-gray-200 group-hover:text-white">IT Support</span>
-                            <span className="text-[10px] text-gray-400">support@example.com</span>
-                        </button>
-                        <button 
-                            type="button" 
-                            onClick={() => fillDemoCredentials('staff@example.com')}
-                            className="flex flex-col items-center justify-center py-2 px-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg transition-colors group"
-                        >
-                            <span className="text-xs font-bold text-gray-200 group-hover:text-white">Staff Biasa</span>
-                            <span className="text-[10px] text-gray-400">staff@example.com</span>
+                            <span className="text-xs font-bold text-primary">Karyawan</span>
+                            <span className="text-[10px] text-muted-foreground mt-0.5">andi.staff</span>
                         </button>
                     </div>
+                    <p className="text-center text-[10px] text-muted-foreground mt-2">
+                        Password semua akun: <span className="font-mono font-bold text-foreground">password123</span>
+                    </p>
                 </div>
-
             </form>
         </GuestLayout>
     );
