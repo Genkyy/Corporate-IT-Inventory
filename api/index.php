@@ -36,10 +36,20 @@ try {
     $_ENV['CACHE_STORE'] = 'file';
     $_ENV['LOG_CHANNEL'] = 'single';
     $_ENV['VIEW_COMPILED_PATH'] = "$tmpStorage/framework/views";
+    $_ENV['APP_SERVICES_CACHE'] = "$tmpStorage/framework/cache/services.php";
+    $_ENV['APP_PACKAGES_CACHE'] = "$tmpStorage/framework/cache/packages.php";
+    $_ENV['APP_CONFIG_CACHE'] = "$tmpStorage/framework/cache/config.php";
+    $_ENV['APP_ROUTES_CACHE'] = "$tmpStorage/framework/cache/routes-v7.php";
+    $_ENV['APP_EVENTS_CACHE'] = "$tmpStorage/framework/cache/events.php";
 
     putenv("APP_KEY=" . $_ENV['APP_KEY']);
     putenv("APP_URL=" . $_ENV['APP_URL']);
     putenv("VIEW_COMPILED_PATH=" . $_ENV['VIEW_COMPILED_PATH']);
+    putenv("APP_SERVICES_CACHE=" . $_ENV['APP_SERVICES_CACHE']);
+    putenv("APP_PACKAGES_CACHE=" . $_ENV['APP_PACKAGES_CACHE']);
+    putenv("APP_CONFIG_CACHE=" . $_ENV['APP_CONFIG_CACHE']);
+    putenv("APP_ROUTES_CACHE=" . $_ENV['APP_ROUTES_CACHE']);
+    putenv("APP_EVENTS_CACHE=" . $_ENV['APP_EVENTS_CACHE']);
     putenv("VERCEL_RUNTIME=1");
     putenv("APP_DEBUG=true");
     putenv("DB_CONNECTION=sqlite");
